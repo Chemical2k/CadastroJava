@@ -5,8 +5,11 @@
  */
 package view;
 
+import javax.swing.table.DefaultTableModel;
 import model.bean.Categoria;
+import model.bean.Produto;
 import model.dao.CategoriaDAO;
+import model.dao.ProdutoDAO;
 
 /**
  *
@@ -14,27 +17,51 @@ import model.dao.CategoriaDAO;
  */
 public class CadastroView extends javax.swing.JFrame {
 
+    private DefaultTableModel dtmProdutos;
+
     /**
      * Creates new form CadastroView
      */
     public CadastroView() {
         initComponents();
         preencherComboBoxCategorias();
+        dtmProdutos = (DefaultTableModel) jTableProdutos.getModel();
+        preencherTabelaProdutos();
     }
 
-    private void preencherComboBoxCategorias(){
+    private void preencherTabelaProdutos() {
+        ProdutoDAO pDao = new ProdutoDAO();
+        int idProduto = 0;
+        String descProduto = "";
+        int qtd = 0;
+        double valor = 0.0d;
+        int idCategoria = 0;
+        dtmProdutos.setRowCount(0);//limpa a tabela
+        for (Produto p : pDao.findAll()) {
+            idProduto = p.getIdProduto();
+            descProduto = p.getDescricao();
+            qtd = p.getQtd();
+            valor = p.getValor();
+            idCategoria = p.getCategoria().getIdCategoria();//Composição
+
+            Object[] dados = {idProduto, descProduto, qtd, valor, idCategoria};
+            dtmProdutos.addRow(dados);
+        }
+    }
+
+    private void preencherComboBoxCategorias() {
         CategoriaDAO catDAO = new CategoriaDAO();
-        for(Categoria cat: catDAO.findAll()){
+        for (Categoria cat : catDAO.findAll()) {
             jComboBoxCategorias.addItem(cat);
         }
     }
-    
-    public void limparCampos(){
+
+    public void limparCampos() {
         jTextFieldDesc.setText("");
         jTextFieldQtd.setText("");
         jTextFieldValor.setText("");
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
