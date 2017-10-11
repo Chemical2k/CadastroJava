@@ -5,6 +5,9 @@
  */
 package view;
 
+import model.bean.Categoria;
+import model.dao.CategoriaDAO;
+
 /**
  *
  * @author Administrador
@@ -16,8 +19,16 @@ public class CadastroView extends javax.swing.JFrame {
      */
     public CadastroView() {
         initComponents();
+        preencherComboBoxCategorias();
     }
 
+    private void preencherComboBoxCategorias(){
+        CategoriaDAO catDAO = new CategoriaDAO();
+        for(Categoria cat: catDAO.findAll()){
+            jComboBoxCategorias.addItem(cat);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
