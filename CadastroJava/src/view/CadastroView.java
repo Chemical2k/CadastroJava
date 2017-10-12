@@ -5,6 +5,7 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.bean.Categoria;
 import model.bean.Produto;
@@ -24,8 +25,8 @@ public class CadastroView extends javax.swing.JFrame {
      */
     public CadastroView() {
         initComponents();
-        preencherComboBoxCategorias();
         dtmProdutos = (DefaultTableModel) jTableProdutos.getModel();
+        preencherComboBoxCategorias();
         preencherTabelaProdutos();
     }
 
@@ -38,6 +39,26 @@ public class CadastroView extends javax.swing.JFrame {
         int idCategoria = 0;
         dtmProdutos.setRowCount(0);//limpa a tabela
         for (Produto p : pDao.findAll()) {
+            idProduto = p.getIdProduto();
+            descProduto = p.getDescricao();
+            qtd = p.getQtd();
+            valor = p.getValor();
+            idCategoria = p.getCategoria().getIdCategoria();//Composição
+
+            Object[] dados = {idProduto, descProduto, qtd, valor, idCategoria};
+            dtmProdutos.addRow(dados);
+        }
+    }
+
+    private void preencherTabelaProdutos(int idCat) {
+        ProdutoDAO pDao = new ProdutoDAO();
+        int idProduto = 0;
+        String descProduto = "";
+        int qtd = 0;
+        double valor = 0.0d;
+        int idCategoria = 0;
+        dtmProdutos.setRowCount(0);//limpa a tabela
+        for (Produto p : pDao.findAll(idCat)) {
             idProduto = p.getIdProduto();
             descProduto = p.getDescricao();
             qtd = p.getQtd();
@@ -85,6 +106,7 @@ public class CadastroView extends javax.swing.JFrame {
         jTableProdutos = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         jComboBoxCategorias = new javax.swing.JComboBox<>();
+        jButtonMostrar = new javax.swing.JButton();
 
         jLabel4.setText("jLabel4");
 
@@ -129,6 +151,24 @@ public class CadastroView extends javax.swing.JFrame {
 
         jLabel5.setText("Categorias:");
 
+        jComboBoxCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jComboBoxCategoriasMouseClicked(evt);
+            }
+        });
+        jComboBoxCategorias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxCategoriasActionPerformed(evt);
+            }
+        });
+
+        jButtonMostrar.setText("Mostrar");
+        jButtonMostrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonMostrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -166,6 +206,8 @@ public class CadastroView extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jComboBoxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonMostrar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -181,11 +223,12 @@ public class CadastroView extends javax.swing.JFrame {
                     .addComponent(jTextFieldQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
+                .addGap(13, 13, 13)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jComboBoxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
+                    .addComponent(jComboBoxCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonMostrar))
+                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonCadastrar)
                     .addComponent(jButtonAlterar)
@@ -197,6 +240,24 @@ public class CadastroView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jComboBoxCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxCategoriasActionPerformed
+        Categoria cat = new Categoria();
+        //Casting de categoria
+        cat = (Categoria) jComboBoxCategorias.getSelectedItem();
+        //Depuração
+        //JOptionPane.showMessageDialog(null, cat);
+
+        preencherTabelaProdutos(cat.getIdCategoria());
+    }//GEN-LAST:event_jComboBoxCategoriasActionPerformed
+
+    private void jComboBoxCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jComboBoxCategoriasMouseClicked
+
+    }//GEN-LAST:event_jComboBoxCategoriasMouseClicked
+
+    private void jButtonMostrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostrarActionPerformed
+        preencherTabelaProdutos();
+    }//GEN-LAST:event_jButtonMostrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -237,6 +298,7 @@ public class CadastroView extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAlterar;
     private javax.swing.JButton jButtonCadastrar;
     private javax.swing.JButton jButtonExcluir;
+    private javax.swing.JButton jButtonMostrar;
     private javax.swing.JComboBox<Object> jComboBoxCategorias;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
